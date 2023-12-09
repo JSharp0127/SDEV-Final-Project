@@ -2,7 +2,7 @@
 
 
 import tkinter as tk #used for GUI creation
-from tkinter import END, INSERT, ttk #used for GUI creation
+from tkinter import BOTH, CENTER, END, INSERT, TOP, YES, ttk, messagebox as mb #used for GUI creation
 import random #random number generation
 from PIL import Image, ImageTk #brings imgs into GUI interface
 from Character_Sheet import ARMOR_CLASS, HIT_POINTS, MODIFIER, CHARACTER_FEAT, CHARACTER_IMAGE, SKILLS, Player_Sheet, LOAD_CHARACTER #modular functions
@@ -17,7 +17,7 @@ class CHARACTER_CREATOR:
         
         #root window creation
         
-        root.geometry("900x900")
+        root.geometry("900x850")
         root.title("Character Creator")
         root.iconbitmap('dice_ico.ico')
        
@@ -46,42 +46,43 @@ class CHARACTER_CREATOR:
         #images
 
         self.d6_img = ImageTk.PhotoImage(Image.open("dice6.png").resize((35,35))) #cover image for the buttons for rolling stats
+        #self.tiamat = ImageTk.PhotoImage(Image.open("dragon.png"))
 
     
         #Control to bring up the help screen 
    
         def HELP_SCREEN():
-            self.help_window = tk.Tk()
-            self.help_window.geometry("700x700")
+            self.help_window = tk.Toplevel()
+            self.help_window.geometry("1000x800")
             self.help_window.title("How to make a character")
+            self.tiamat = ImageTk.PhotoImage(Image.open("dragon.png").resize((750,200)))
+            self.help_img = tk.Label(self.help_window, image= self.tiamat)
             self.help_text = HELP_TEXT()
-            self.help_message = tk.Message(self.help_window, font= ('Times New Roman', 18), text= self.help_text)
+            self.help_message = tk.Text(self.help_window, font= ('Times New Roman', 16))
+            self.help_message.insert(END, self.help_text)
+            self.help_message.config(state="disabled")
+            self.help_button = tk.Button(self.help_window, text="OK",height=3,width=20, font= ('Times New Roman',  12), command= self.help_window.destroy)
+            self.help_img.pack(side=TOP)
             self.help_message.pack()
+            self.help_button.pack()
             self.help_window.mainloop()
         
         def GLOSSARY_SCREEN():
-            self.gloss_window = tk.Tk()
+            self.gloss_window = tk.Toplevel()
             self.gloss_window.geometry("700x700")
             self.gloss_window.title("GLOSSARY")
+            self.book = ImageTk.PhotoImage(Image.open("book.jpg").resize((750,200)))
+            self.gloss_img = tk.Label(self.gloss_window, image= self.book)
             self.gloss_text = GLOSSARY()
-            self.gloss_message = tk.Message(self.gloss_window, font= ('Times New Roman', 18), text= self.gloss_text)
+            self.gloss_message = tk.Text(self.gloss_window,width= 50,height=15, font= ('Times New Roman', 18))
+            self.gloss_message.insert(END, self.gloss_text)
+            self.gloss_message.config(state="disabled")
+            self.gloss_button = tk.Button(self.gloss_window, text="OK",height=3,width=20, font= ('Times New Roman',  12), command= self.gloss_window.destroy)
+            self.gloss_img.pack(side=TOP)
             self.gloss_message.pack()
+            self.gloss_button.pack()
             self.gloss_window.mainloop()
    
-
-        #menu bar
-        
-        self.menu_bar = tk.Menu(root)
-        root.config(menu= self.menu_bar)
-        self.file_menu = tk.Menu(self.menu_bar)
-        self.menu_bar.add_cascade(label="File", menu= self.file_menu)
-        self.file_menu.add_command(label= "Quit", command=root.quit)
-        self.help_menu = tk.Menu(self.menu_bar)
-        self.menu_bar.add_cascade(label= "Help", menu= self.help_menu)
-        self.help_menu.add_command(label= "How to make a character", command= HELP_SCREEN)
-        self.help_menu.add_command(label= "Glossay", command= GLOSSARY_SCREEN)
-        
-        
 
         #main page header
 
@@ -93,7 +94,7 @@ class CHARACTER_CREATOR:
         def RETURN_ENTRY():
             global player 
             self.player = self.name.get()
-            print("Player name: ",self.player)
+            #print("Player name: ",self.player)
             self.char_name["text"] = f"Character: {self.player}"
             self.name.after(1000, RETURN_ENTRY)
         
@@ -239,14 +240,14 @@ class CHARACTER_CREATOR:
         def RETURN_RACE():
             global player_race
             self.player_race = self.race_choice.get()
-            print("Player Race: ",self.player_race)
+            #print("Player Race: ",self.player_race)
             self.race_label["text"] = f"Race: {self.player_race}"
             self.race_label.after(1000, RETURN_RACE)
    
         def RETURN_CLASS():
             global player_class
             self.player_class = self.class_choice.get()
-            print("Player Class: ",self.player_class)
+            #print("Player Class: ",self.player_class)
             self.class_label["text"] = f"Class: {self.player_class}"
             self.class_label.after(1000, RETURN_CLASS)
     
@@ -255,7 +256,7 @@ class CHARACTER_CREATOR:
             global hp_level
             self.player_level = self.level_choice.get()
             self.hp_level = int(self.player_level) 
-            print("Player Level: ",self.player_level)
+            #print("Player Level: ",self.player_level)
             self.level_label["text"] = f"Level: {self.player_level}"
             self.level_label.after(1000, RETURN_LEVEL)
       
@@ -263,14 +264,14 @@ class CHARACTER_CREATOR:
             global player_hp    
             self.player_hp = HIT_POINTS(self.player_class, self.con_mod, self.hp_level)
             self.hp_label["text"] = f"Hit Points: {self.player_hp}"
-            print(f"Player HP: {self.player_hp}")
+            #print(f"Player HP: {self.player_hp}")
     
         def RETURN_AC():
-            self.player_ac = ARMOR_CLASS(self.dex_mod, self.player_class, self.con_mod)
+            self.player_ac = ARMOR_CLASS(self.dex_mod, self.player_class, self.con_mod, self.wis_mod)
             self.ac_label["text"] = f"Armor Class: {self.player_ac}"
-            print(f"Player AC: {self.player_ac}")
-            print(self.dex_mod)
-            print(self.con_mod)
+            #print(f"Player AC: {self.player_ac}")
+            #print(self.dex_mod)
+            #print(self.con_mod)
             self.ac_label.after(1000, RETURN_AC)
     
         def RETURN_FEAT():
@@ -279,7 +280,7 @@ class CHARACTER_CREATOR:
             self.spell_mod = None
             if self.player_class == "Bard":
                 self.spell_mod = self.cha_mod
-            if self.player_class == "Cleric" or self.player_class == "Druid":
+            if self.player_class == "Cleric" or self.player_class == "Druid" or self.player_class == "Monk":
                 self.spell_mod = self.wis_mod
             self.feat_text.insert(END, CHARACTER_FEAT(self.player_race, self.player_class, None, self.player_level, self.spell_mod))
             self.feat_text.config(state= 'disabled')
@@ -371,7 +372,7 @@ class CHARACTER_CREATOR:
         self.skills_frame = tk.Frame(root, relief="ridge", borderwidth=5)
         self.skill_label = tk.Label(self.skills_frame, text= "Skills: ", font= ('Times New Roman', 12))
         self.skill_label.pack()
-        self.skill_text = tk.Text(self.skills_frame, width=106,font=('Times New Roman', 12), state='disable')
+        self.skill_text = tk.Text(self.skills_frame, width=108, font=('Times New Roman', 12), state='disable')
         RETURN_SKILL()
         self.skill_text.pack()
         
@@ -417,9 +418,9 @@ class CHARACTER_CREATOR:
         def LOADING():
             self.load_name = self.load_entry.get()
             self.sheet = LOAD_CHARACTER(self.load_name)
-            print(self.sheet)
+            #print(self.sheet)
             self.list_stats = list(self.sheet.values())
-            print(self.list_stats[0])
+            #print(self.list_stats[0])
             self.name.insert(END,self.list_stats[0])
             self.race_choice.set(self.list_stats[1])
             self.class_choice.set(self.list_stats[2])
@@ -427,7 +428,7 @@ class CHARACTER_CREATOR:
             self.hp_label["text"] = f"Hit Points: {self.player_hp}"
             self.level_choice.set(self.list_stats[10])
             self.str_main = int(self.list_stats[3])
-            print(self.str_main)
+            #print(self.str_main)
             self.dex_main = int(self.list_stats[4])
             self.con_main = int(self.list_stats[5])
             self.int_main = int(self.list_stats[6])
@@ -466,6 +467,14 @@ class CHARACTER_CREATOR:
             self.load_ok_button.pack()
             self.load_window.mainloop()
             
+        def EXIT_SHEET():
+            exit_choice = mb.askquestion("Exit Application", "Do you want to quit?")
+            if exit_choice == "yes":
+                root.destroy()
+            else:
+                mb.showinfo("Return", "Returing to App")
+            
+            
                 
 
 
@@ -474,17 +483,33 @@ class CHARACTER_CREATOR:
         self.button_frame1 = tk.Frame(self.option_frame)
         self.button_frame2 = tk.Frame(self.option_frame)
         self.new_button = tk.Button(self.button_frame1, text= "NEW", font=('Times New Roman', 12), height=2, width=7, command= NEW_SHEET) #returns sheet back to start conditions
-        self.save_button = tk.Button(self.button_frame1, text= "SAVE", font=('Times New Roman', 12), height=2, width=7, command= SAVE_SHEET) #saves current sheet into a json file
-        self.load_button = tk.Button(self.button_frame1, text= "LOAD", font=('Times New Roman', 12), height=2, width=7, command=LOAD_SHEET) #loads json file into current sheet
-        self.test1_button = tk.Button(self.button_frame2, text= "TEST1", font=('Times New Roman', 12), height=2, width=7)
+        self.save_button = tk.Button(self.button_frame2, text= "SAVE", font=('Times New Roman', 12), height=2, width=7, command= SAVE_SHEET) #saves current sheet into a json file
+        self.load_button = tk.Button(self.button_frame2, text= "LOAD", font=('Times New Roman', 12), height=2, width=7, command=LOAD_SHEET) #loads json file into current sheet
+        self.test1_button = tk.Button(self.button_frame1, text= "EXIT", font=('Times New Roman', 12), height=2, width=7, command=EXIT_SHEET)
         self.test2_button = tk.Button(self.button_frame2, text= "TEST2", font=('Times New Roman', 12), height=2, width=7)
         self.test3_button = tk.Button(self.button_frame2, text= "TEST3", font=('Times New Roman', 12), height=2, width=7)
         self.new_button.pack()
         self.save_button.pack()
         self.load_button.pack()
         self.test1_button.pack()
-        self.test2_button.pack()
-        self.test3_button.pack()
+        #self.test2_button.pack()
+        #self.test3_button.pack()
+        
+
+        #menu bar
+        
+        self.menu_bar = tk.Menu(root)
+        root.config(menu= self.menu_bar)
+        self.file_menu = tk.Menu(self.menu_bar)
+        self.menu_bar.add_cascade(label="File", menu= self.file_menu)
+        self.file_menu.add_command(label= "New", command=NEW_SHEET)
+        self.file_menu.add_command(label= "Save", command=SAVE_SHEET)
+        self.file_menu.add_command(label= "Load", command=LOAD_SHEET)
+        self.file_menu.add_command(label= "Quit", command=EXIT_SHEET)
+        self.help_menu = tk.Menu(self.menu_bar)
+        self.menu_bar.add_cascade(label= "Help", menu= self.help_menu)
+        self.help_menu.add_command(label= "How to make a character", command= HELP_SCREEN)
+        self.help_menu.add_command(label= "Glossay", command= GLOSSARY_SCREEN)
        
         
          
@@ -498,11 +523,11 @@ class CHARACTER_CREATOR:
         self.race_frame.place(x=200, y=75)
         self.class_frame.place(x=0, y=170)
         self.level_frame.place(x= 200, y=170)
-        self.hp_frame.place(x=300, y=75)
+        self.hp_frame.place(x=325, y=75)
         self.ac_frame.place(x=300, y=170)
         self.feat_frame.place(x=380, y=260)
         self.char_img_frame.place(x=650, y=40)
-        self.skills_frame.place(x=0, y=700)
+        self.skills_frame.place(x=0, y=700, height= 100)
         self.option_frame.place(x=480, y=75)
         self.button_frame1.pack(side= tk.LEFT)
         self.button_frame2.pack(side = tk.RIGHT)
@@ -518,7 +543,7 @@ def SPLASH_SCREEN():
             splash_message = tk.Text(splash_frame, font= ('Times New Roman', 16))
             splash_message.insert(END, splash_text)
             splash_message.config(state='disabled')
-            splash_button = tk.Button(splash_frame, text="OK", font= ('Times New Roman',  12), command= splash_window.destroy)
+            splash_button = tk.Button(splash_frame, text="OK",height=3,width=20, font= ('Times New Roman',  12), command= splash_window.destroy)
             splash_frame.pack()
             splash_message.pack()
             splash_button.pack()
