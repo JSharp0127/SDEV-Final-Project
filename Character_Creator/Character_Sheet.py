@@ -1,16 +1,16 @@
-import json
-import random
+import json #used to save character sheets
+import random #used for dice rolls
 
 
 
-#--UNUSED-- Player stats, for saving/converting
+#Charcter stats are brought in and converted into a dictionary then sent to Save_Character
 
 def Player_Sheet(name, race, player_Class, player_hp, level, str_Stat, dex_Stat, con_Stat, int_Stat, win_Stat, cha_Stat):
 
     global character_sheet
     character_sheet = {"Name": name, "Race": race, "Class": player_Class, "Str": str_Stat, "Dex": dex_Stat, "Con": con_Stat, "Int": int_Stat, "Wis": win_Stat, "Cha": cha_Stat,
                       "HP": player_hp, "Level": level}
-    print(character_sheet)
+    #print(character_sheet)
     Save_Character(name)
     
 #Brings in the rolled stat value and returns the modifier
@@ -19,7 +19,7 @@ def MODIFIER(roll):
     mod = -5
     for count in range(1,30,2):
         if roll == count or roll == count - 1:
-            print(type(mod))
+            #print(type(mod))
             return mod
         mod +=1
 
@@ -56,15 +56,19 @@ def HIT_POINTS(player_class, con_mod = None, level = None):
     
     return hp
 
-#Brings in dex_mod and returns armor class (Barbarian and Monk also bring in con_mod)
+#Brings in dex_mod and returns armor class (Barbarian and Monk also bring in con_mod or wis_mod)
         
-def  ARMOR_CLASS(dex= None,player_class = None, con = None):
+def  ARMOR_CLASS(dex= None,player_class = None, con = None, wis = None):
     player_ac = 10 + dex
     if player_class == "Barbarian":
         player_ac += con
+    if player_class == "Monk":
+        player_ac += wis
+    if player_class == "Sorcerer":
+        player_ac += 3
     return player_ac
 
-#--UNUSED-- Character save
+#Character save and LOAD_CHARACTER
 
 def Save_Character(file_name):
     with open(file_name + ".json", 'w') as f:
@@ -400,8 +404,85 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
             
     #Fighter
 
+    if player_class == "Fighter":
+        bonus = 2
+        prof = [("Armor: All armor and shields"), 
+                ("Weapons: Simple and martial weapons"), 
+                ("Tools: None"), 
+                ("Saving Throws: STR and CON")]
+        
+        prof_bonus = f"Proficiency Bonus: +{bonus}"
+        
+        c_feat = ""
+        c_table = [
+            ("Fightering Style:: Great Weapon Fighting"), 
+            ("When you roll a 1 or 2 on a DMG die for an attack with a two handed weapon, you may reroll the die and must take the new roll."),
+            ("Second Wind: During your turn you cna spend a bonus action to heal for 1d10 + your fighter level. This ability recharges after a short or long rest."),
+            ("Action Surge: During you turn you can use this action to take one addition action. This ability recharges after a short or long rest."),
+            ("Sub-Class: Champion"),
+            ("Improved Critical: Your weapon attacks score a critial hit on a roll of 19 or 20.")
+            ] 
+        if level >= '1':
+            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{c_table[0]}\n{c_table[1]}\n{c_table[2]}"    
+        if level >= '2':
+            c_feat += f"\n{c_table[3]}"
+        if level >= '3':
+            c_feat  += f"\n{c_table[4]}\n{c_table[5]}"
+
     #Monk
 
+    if player_class == "Monk":
+        bonus = 2
+        prof = [("Armor: None"), 
+                ("Weapons: Simple weapons and shortswords"), 
+                ("Tools: 1 artisan tool or 1 musical instrument"), 
+                ("Saving Throws: STR and DEX")]
+        martial_atk = ["1d4"]
+        martial_str = f"Your Martial Arts DMG is {martial_atk}"
+        prof_bonus = f"Proficiency Bonus: +{bonus}"
+        ki_point = [0 , 2, 3]
+        if level == '1':
+            ki = ki_point[0]
+        if level == '2':
+            ki = ki_point[1]
+        if level == '3':
+            ki = ki_point[2]
+        ki_str = f"You have {ki} Ki Points"
+        unarmored_move = [0, 10]
+        if level == '1':
+            move = unarmored_move[0]
+        if level == '2' or level == '3':
+            move = unarmored_move[1]
+        unarmored_move_str = f"You have {move}ft of Unarmored Movement"
+        ki_save = 8 + bonus + spell_mod
+        ki_save_str = f"Ki Save DC: {ki_save}"
+        c_feat = ""
+        c_table = [
+            ("Unarmored Defense: While wearing no armor your AC is equal to 10 + DEX mod + WIS mod."),
+            ("Martial Arts: While unarmed or wielding a \"Monk Weapon\" (shortsword or simple weapon) you gain the following benifits:"),
+            ("You can use DEX instead of STR for attack and DMG rolls"),
+            ("You can roll a d4 instead of the normal unarmed or monk weapon DMG. This die is based on you Martial Arts."),
+            ("If you attack with with a monk weapon or unarmed, you can make a unarmed attack as a bonus action."),
+            ("Ki: You can spend a ki point to preform a certain feature. You regain ki points after a short or long rest."),
+            ("Ki features:"),
+            ("Flurry of Blows: Spend 1 ki point after making an attack to make two unarmed attacks as a bonus action"),
+            ("Patient Defense: Spend 1 ki point to take Dodge as a bonus action"),
+            ("Step of the Wind: Spend 1 ki point to either Disengage or Dash as a bonus action. Your jump distance is doubled this turn"),
+            ("Unarmored Movement: While not wearing armor or wielding a shield you gain extra movement."),
+            ("Deflect Missles: If hit by a ranged weapon attack you can reduce the DMG by 1d10 + your DEX mod + monk level. If you reduce the DMG to 0 you can catch the missle and throw it back. This attack uses proficiency and counts as a monk weapon with normal range of 20ft and long range of 60ft."),
+            ("Sub-Class: Way of the Open Hand"),
+            ("Open Hand Technique: after using Flurry of Blows you can use one of these features:"),
+            ("Target must succeed on a DEX saveing throw of be knocked prone"),
+            ("Target must succeed a STR saving throw or be pushed back 15ft"),
+            ("It can't make a reaction until the end of your next turn")
+            ] 
+        if level >= '1':
+            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{martial_str}\n{ki_str}\n{unarmored_move_str}\n{c_table[0]}\n{c_table[1]}\n{c_table[2]}\n{c_table[3]}\n{c_table[4]}"    
+        if level >= '2':
+            c_feat += f"\n{c_table[5]}\n{c_table[6]}\n{c_table[7]}\n{c_table[8]}\n{c_table[9]}\n{c_table[10]}"
+        if level >= '3':
+            c_feat  += f"\n{c_table[11]}\n{c_table[12]}\n{c_table[13]}\n{c_table[14]}\n{c_table[15]}\n{c_table[16]}"
+    
     #Paladin
 
     #Ranger
@@ -498,6 +579,12 @@ def SKILLS(stre=0, dex=0, con=0, intel=0, wis=0, cha=0, player_class= None, leve
     if player_class == "Druid":
         stats[7] += prof_bonus
         stats[13] += prof_bonus
+    if player_class == "Fighter":
+        stats[12] += prof_bonus
+        stats[15] += prof_bonus
+    if player_class == "Monk":
+        stats[0] += prof_bonus
+        stats[1] += prof_bonus
         
     #Skills and stats are indexed through and combined into  a string (skill_bloack) to be returned
 
@@ -519,12 +606,12 @@ if __name__=="__main__":
     choice = input("mod test (mod/hp)")
     while choice == "mod":
         roll = int(input("roll"))
-        print(MODIFIER(roll))
+        #print(MODIFIER(roll))
     while choice == "hp":
         player_class = input("player class")
         con_mod = int(input("con mod"))
         level = int(input("level"))
-        print(HIT_POINTS(player_class, con_mod, level))
+        #print(HIT_POINTS(player_class, con_mod, level))
     while choice == "skill":
        stre = input("str:")
        dex = input("dex:")

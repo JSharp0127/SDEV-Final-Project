@@ -26,10 +26,12 @@
     <Compile Include="text.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="book.jpg" />
     <Content Include="dice34roll.mp3" />
     <Content Include="dice6.png" />
     <Content Include="dice_ico.ico" />
     <Content Include="download.png" />
+    <Content Include="dragon.png" />
     <Content Include="dragonborn.jpg" />
     <Content Include="dwarf.jpg" />
     <Content Include="elf.jpg" />
@@ -39,6 +41,7 @@
     <Content Include="halforc.jpg" />
     <Content Include="human.jpg" />
     <Content Include="testchar.json" />
+    <Content Include="tiamat.jpg" />
     <Content Include="tiefling.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
