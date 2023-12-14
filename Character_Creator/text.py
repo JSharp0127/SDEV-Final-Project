@@ -1,4 +1,11 @@
+"""
+Author: John Sharp
+File text.py
 
+This module is used to store and import the larger text strings to the main program.
+Using a separate module makes it easy to add any additional text and keeps from needing to add large swaths of code to the main program.
+
+"""
 
 
 def GLOSSARY():
@@ -47,7 +54,7 @@ def SPLASH_TEXT():
         "Skills\nSub-Race\nSub-Class\nSpells\n" +
         "While the goal is to make this application more customizable in the future for the time being using these\n" +
         "restricted choice selections makes it so the application can be released in a stable condition so it can be\n" +
-        "accessed asap for players to use.\n"
+        "accessed asap for players to use.\n" +
         "\n"+
         "There is an  indepth How to Create a Character explanation under the Help menu, but the majority\n" +
         "of creation consists of player choices from the provided drop down menues, rolling and compilation\n" +
@@ -67,7 +74,13 @@ def SPLASH_TEXT():
         "12/4/23  - \"Filed Under D.... for Doughnut\"\n" +
         "(Character sheets can now be saved and loaded using the characters name for the file name)\n" +
         "12/6/23 - \"Swords and Fists\"\n" +
-        "(The Fighter and Monk class option are added)\n"
+        "(The Fighter and Monk class option are added)\n" +
+        "12/11/23 - \"Swords and Bows\"\n" +
+        "(Paladin and Ranger added to class options)\n" +
+        "12/13/23 - \"Sneaky Spell Slingers\"\n" +
+        "(Rogue and Sorcercer added to class options)\n" +
+        "12/14/23 - \"Fire and Shadows\"\n" +
+        "(Warlock and Wizard added to the class options. ALL CLASSES NOW ADDED!!)\n"
         )
     return splash_str
 

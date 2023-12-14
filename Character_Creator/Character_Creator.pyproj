@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f20298b4-ec02-4101-858c-bb6eed824d38</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Character_Creator.py</StartupFile>
+    <StartupFile>SharpJohnFinalProject.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Character_Creator.py" />
+    <Compile Include="SharpJohnFinalProject.py" />
     <Compile Include="Character_Sheet.py" />
     <Compile Include="text.py" />
   </ItemGroup>
