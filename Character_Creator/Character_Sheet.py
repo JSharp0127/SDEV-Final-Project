@@ -1,3 +1,12 @@
+"""
+Author: John Sharp
+File: Character_Sheet.py
+
+This module holds many of the backend functions for the main program, such as saveing, loading, making stat changes, and choosing the correct character features.
+
+"""
+
+
 import json #used to save character sheets
 import random #used for dice rolls
 
@@ -25,7 +34,7 @@ def MODIFIER(roll):
 
 #Brings in class for hit die, con_mod, and level then returns hit point value
         
-def HIT_POINTS(player_class, con_mod = None, level = None):
+def HIT_POINTS(player_class, con_mod = None, level = None, race = None):
     class_dict = {"Barbarian": 12, "Bard": 8, "Cleric": 8, "Druid": 8, "Fighter": 10, "Monk": 8, "Paladin": 10, "Ranger": 10, "Rogue": 8, "Sorcerer": 6, "Warlock": 8, "Wizard": 6}
     
     #Separate class_dict into 2 lists (class_select and hit_dice)
@@ -51,14 +60,16 @@ def HIT_POINTS(player_class, con_mod = None, level = None):
                 roll_total = roll + roll_total
                 count+=1
     hp = roll_total + (con_mod * level) 
-    if player_class == "Dwarf":
+    if player_class == "Sorcerer":
+        hp = hp + (level * 1)
+    if race == "Dwarf":
         hp = hp + (level * 1)
     
     return hp
 
 #Brings in dex_mod and returns armor class (Barbarian and Monk also bring in con_mod or wis_mod)
         
-def  ARMOR_CLASS(dex= None,player_class = None, con = None, wis = None):
+def  ARMOR_CLASS(dex= None,player_class = None, con = None, wis = None, level = None):
     player_ac = 10 + dex
     if player_class == "Barbarian":
         player_ac += con
@@ -66,6 +77,8 @@ def  ARMOR_CLASS(dex= None,player_class = None, con = None, wis = None):
         player_ac += wis
     if player_class == "Sorcerer":
         player_ac += 3
+    if player_class == "Paladin" and (level == '2' or level == '3'):
+        player_ac += 1
     return player_ac
 
 #Character save and LOAD_CHARACTER
@@ -90,6 +103,7 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
     c_feat = "" #class features
     
     #Player chosen race features
+    
     #Dwarf
 
     if player_race == "Dwarf":
@@ -161,11 +175,21 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
         r_feat = ("Darkvision: 60ft\n" + 
                   "Hellish Resistance: Resistance to fire damage.\n" + 
                   "Infernal Legacy:\nLevel 1: Thaumaturgy\nLevel 3: Hellish Rebuke\nLevel 5: Darkness, once a long rest\nCHA is your spellcasting ability.\n"+ 
-                  "Languages: Common and Infernal")
+                  "Languages: Common and Infernal\n")
         
     #Dragonborn
+
+    if player_race == "Dragonborn":
+        r_feat = (
+            "Dragon Ancestry: You are a descendent of a Red dragon." +
+            "\nBreath Attack: You gain a breath ATK dealing fire DMG in a 15ft cone" +
+            f"\nBreath Attack Save DC: {8+2+2}.A creature takes 2d6 on a fail and halk DMG on a success. Your breath ATK recharges after a short or long rest." +
+            "\nDamage Resistance: You have DMG resistance to fire." +
+            "\nLanguages: You know common and draconic.\n"
+            )
         
     #Player choses class features
+
     #Barbarian
 
     if player_class == "Barbarian":
@@ -218,7 +242,7 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
         cantrips = "Cantrips: 2"
         spells_known = "Spells Known: 4"
         slots = "Spell Slots: 1st: (2)"
-        spells = "Cantrips:\nxxxx\n1st:\nxxxxx"
+        spells = "Cantrips:\nVicious Mockery\nTrue Strike\n1st:\nHideous Laughter\nThunderwave\nSilent Image\nCure Wounds"
         bard_inspir_charge = spell_mod
         song_dice = "1d6"
         if bard_inspir_charge < 1:
@@ -226,11 +250,11 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
         if level == '2':
             spells_known = "Spells Known: 5"
             slots = "Spell Slots: 1st: (3)"
-            spells = "Cantrips:\nxxxx\n1st:\nxxxxx"
+            spells = "Cantrips:\nVicious Mockery\nTrue Strike\n1st:\nHideous Laughter\nThunderwave\nSilent Image\nCure Wounds\nComprehend Languages"
         if level == '3':
             spells_known = "Spells Known: 6"
             slots = "Spell Slots: 1st: (4) 2nd:  (2)"
-            spells = "Cantrips:\nxxxx\n1st:\nxxxxx\n2nd:\nxxxxx"
+            spells = "Cantrips:\nVicious Mockery\nTrue Strike\n1st:\nHideous Laughter\nThunderwave\nSilent Image\nCure Wounds\nComprehend Languages\n2nd:\nEnthrall"
         prof_bonus = f"Proficiency Bonus: +{bonus}"
         spell_dc = 8 + bonus + spell_mod
         spell_dc_str = f"Spell Save DC: {spell_dc}"
@@ -269,17 +293,17 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
         cantrips = "Cantrips: 3"
         spells_known = f"Spells Prepared: {int(level) + spell_mod}"
         slots = "Spell Slots: 1st: (2)"
-        spells = "Cantrips:\nxxxx"
+        spells = "Cantrips:\nSacred Flame\nGuidance\nSpare the Dying"
         if level == '2':
             cantrips = "Cantrips: 3"
             spells_known = f"Spells Prepared: {int(level) + spell_mod}"
             slots = "Spell Slots: 1st: (3)"
-            spells = "Cantrips:\nxxxx"
+            spells = "Cantrips:\nSacred Flame\nGuidance\nSpare the Dying"
         if level == '3':
             cantrips = "Cantrips: 3"
             spells_known = f"Spells Prepared: {int(level) + spell_mod}"
             slots = "Spell Slots: 1st: (4) 2nd: (2)"
-            spells = "Cantrips:\nxxxx"
+            spells = "Cantrips:\nSacred Flame\nGuidance\nSpare the Dying"
         prof_bonus = f"Proficiency Bonus: +{bonus}"
         spell_dc = 8 + bonus + spell_mod
         spell_dc_str = f"Spell Save DC: {spell_dc}"
@@ -339,17 +363,17 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
         cantrips = "Cantrips: 2"
         spells_known = f"Spells Prepared: {int(level) + spell_mod}"
         slots = "Spell Slots: 1st: (2)"
-        spells = "Cantrips:\nxxxx\n1st:\nxxxxx"
+        spells = "Cantrips:\nPoison Spray\nGuidance"
         if level == '2':
             cantrips = "Cantrips: 3"
             spells_known = f"Spells Prepared: {int(level) + spell_mod}"
             slots = "Spell Slots: 1st: (3)"
-            spells = "Cantrips:\nxxxx"
+            spells = "Cantrips:\nPoison Spray\nGuidance\nProduce Flame"
         if level == '3':
             cantrips = "Cantrips: 3"
             spells_known = f"Spells Prepared: {int(level) + spell_mod}"
             slots = "Spell Slots: 1st: (4) 2nd: (2)"
-            spells = "Cantrips:\nxxxx"
+            spells = "Cantrips:\nPoison Spray\nGuidance\nProduce Flame"
         prof_bonus = f"Proficiency Bonus: +{bonus}"
         spell_dc = 8 + bonus + spell_mod
         spell_dc_str = f"Spell Save DC: {spell_dc}"
@@ -485,36 +509,276 @@ def CHARACTER_FEAT(player_race = None, player_class = None, player_background = 
     
     #Paladin
 
+    if player_class == "Paladin":
+       bonus = 2
+       prof = [
+           ("Armor: All armor and shields "), 
+               ("Weapons: Simple and martial weapons"), 
+               ("Tools: None"), 
+               ("Saving Throws: WIS and CHA")
+               ]
+       spells_known = f"Spells Prepared: {int(level)/2 + spell_mod}"
+       slots = "Spell Slots: 1st: (2)"
+       spells = "1st:\nxxxxx"
+       oath_epells = [
+           ("3rd: Protection from Evil and Good, Sanctuary"),
+           ("5th: Lesser Restoration, Zone of Truth"),
+           ("9th: Beacon of Hope, Dispel Magic"),
+           ("13th: Freedom of Movement, Guardian of Faith"),
+           ("17th: Commune, Flame Strike")
+           ]
+       prof_bonus = f"Proficiency Bonus: +{bonus}"
+       spell_dc = 8 + bonus + spell_mod
+       spell_dc_str = f"Spell Save DC: {spell_dc}"
+       spell_attack = bonus + spell_mod
+       spell_attack_str = f"Spell Attack Modiifier: {spell_attack}"
+       c_feat = ""
+       c_table = [
+           ("Divin Sense: Within 60ft you can sense any celestial, fiend, or undead unless it is behind total cover. You can identify which type of creature it is but not it's identity (A specific vampire or angel for example.) You also can aslo detect the presence of any place or object that has been consecrated or desecrated, as if with the \'hallow\' spell. You can use this feature a number of times equal to 1+ your CHA mod. this feature recharges after a long rest."),
+           (f"Divin Senese Charges: {1 + spell_mod}"),
+           ("Lay on Hands: You have a pool of healing that recharges after a long rest. As an action you can touch a creature and heal it for up to its max HP. You can also expend 5 HP from the pool to cure the target of one disease or neutralize one poison afftecting it. this feature has no effect on undead or constructs."),
+           (f"Lay on Hands Pool: {int(level) * '5'}"),
+           ("Fighting Style: Defense: While wearing armor you gain + 1 to AC"),
+           ("Preparing Spells: You can choose spell from the Paladin spell list as long as they are\nthe same or below your avalibale slots. \nYou can change your spell list after a long rest."),
+           ("Divine Smite: When you hit a creatre with a melee weapon ATk, you can expend one spell slot to deal readiant DMG to the target. This DMG is in addition to the normal weapon DMG. The extra DMG is 2d8 for a 1st LVL slot plus 1d8 for each slot higher to a max of 5d8. The DMG increases by 1d8 if the target is an udead or fiend."),
+           ("Divine Health: You are immune to disease."),
+           ("Sub-Class: Oath of Devotion"),
+           ("Tenets of Devotion:"),
+           ("Honesty: Don't lie or cheat. Let your word be your promise."),
+           ("Courage: Never fear to act, though caution is wise."),
+           ("Compassion: Aid others, protect the weak, and punish those who threaten them. show mercy to your foes, but temper it with wisdon."),
+           ("Honor: Threat others with fainess, and let your honorable deeds be an example to them. Do as much good as possible while causeing the lease amount of harm."),
+           ("Duty: Be responsible for your actions and their consequences, protect those entrusted to your care, and obey those who have authority over you."),
+           ("(While these tenets are mostly for RP flavoring, breaking them can cause your character to lose favor with their diety and lose their paladin abilities.)"),
+           ("Oath Spells:"),
+           ("Channel Divinity: Sacred Weapon and Turn the Unholy"),
+           ("Sacred Weapon: You can imbue one weapon you are holding with holy energy. For 1 minute you add your CHA mod to attack rolls made by the weapon. The weapon also emits bright light in a 20ft radius and dim light 20ft beyond that. If the weapon is not magical then it becomes magical for the duration"),
+           ("Turn the Unholy: As an action each fiend or undead within 30ft of you that can see or hear you must make a WIS saving throw. If the creature failes it is turned for 1 minute or untul it takes DMG. A turned creature must takes its turn trying to move as far from the you as possible. The creature can not use reations and can only use its actions \nto dash or escape from something that makes it unable to move")
+           ] 
+       if level >= '1':
+           c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{spell_dc_str}\n{spell_attack_str}\n{c_table[0]}\n{c_table[1]}\n{c_table[2]}\n{c_table[3]}"    
+       if level >= '2':
+           c_feat += f"\n{c_table[4]}\n{c_table[5]}\n{c_table[6]}"
+       if level >= '3':
+           c_feat  += f"\n{c_table[7]}\n{c_table[8]}{c_table[9]}\n{c_table[10]}\n{c_table[11]}\n{c_table[12]}\n{c_table[13]}\n{c_table[14]}\n{c_table[15]}\n{c_table[16]}\n{oath_epells[0]}\n{c_table[17]}\n{c_table[18]}\n{c_table[19]}"
+
     #Ranger
+
+    if player_class == "Ranger":
+        bonus = 2
+        prof = [("Armor: Light and medium armor. Shields"), 
+                ("Weapons: Simple and martial weapons"), 
+                ("Tools: None"), 
+                ("Saving Throws: STR and DEX")] 
+        spells_known = "Spells Known: 2"
+        slots = "Spell Slots: 1st: (2)"
+        spells = "1st:\nHunter's Mark\nLongstrider"
+        if level == '3':
+            spells_known = "Spells Known: 3"
+            slots = "Spell Slots: 1st: (3)"
+            spells = "1st:\nHunter's Mark\nLongstrider\nFog Cloud"
+        prof_bonus = f"Proficiency Bonus: +{bonus}"
+        spell_dc = 8 + bonus + spell_mod
+        spell_dc_str = f"Spell Save DC: {spell_dc}"
+        favored_terrain_info = (
+            ("Difficult terrain doesn't slow your group's travel\n") +
+        ("Even when you are engaged in another activity while traveling you remain alert to danger.\n") +
+        ("If you are traveling alone, you can move stealthily at a normal pace.\n") +
+        ("When you forage, you find twice as much food as you normally would.\n") +
+        ("While tracking other creatures, you also learn their exact number, their sizes, and how long ago they passed through the area.")
+        )
+        c_feat = ""
+        c_table = [
+            ("Favored Enemy: Choose a type of creature or two races of humanoids, such as either beasts or dragons or two humanoids like gnolls and orcs. You have advatage on WIS (Survival) checks to track your favored enemy as well as INt checks to recall information about them. You also know a language spoken by your favored enemy or one of the two humanoids."),
+            ("Natural Explorer: Choose	one	type of	favored	terrain: arctic, coast,	desert, forest, grassland, mountain, or swamp."),
+            ("When you make INT or WIS checks realted to your favored terrain your proficency bonus is doubled if your were already profiecent in that skills."),
+            (favored_terrain_info),
+            ("Fighting Style: Archery, you gain +2 bonus to attack rolls you make with a ranged weapon."),
+            ("Primeval Awarness: As an action you can expend a spell slot and for one minute, per spell level, you can sense whether the following types of creatures are presnt within one mile or six miles if you are in your favored terrain."),
+            ("Aberration, celestials, dragons, elementals, fey, fiends, and undead."),
+            ("This feature doesn't reveal the creatures location or number."),
+            ("Sub-Class: Hunter"),
+            ("Hunter's Prey: gain one of the following features:"),
+            ("Colossus Slayer: When you hit a creature that is below its HP max you can deal 1d8 extra DMG once per turn"),
+            ("Giant Killer: When a large or lager creautre within 5ft of you hits or misses you with an attack you can use a reaction to immediatly attack that creature."),
+            ("Horde Breaker: Once during each of your turns when you make a weapon ATK you can make another attck with the same weapon against another creature that is within 5ft of the original target and within range.")
+            ] 
+        if level >= '1':
+            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{c_table[0]}\n{c_table[1]}\n{c_table[2]}\n{c_table[3]}"    
+        if level >= '2':
+            c_feat += f"\n{c_table[4]}\n{spells_known}\n{slots}\n{spells}\n{c_table[5]}\n{c_table[6]}\n{c_table[7]}"
+        if level >= '3':
+            c_feat  += f"\n{c_table[8]}\n{c_table[9]}\n{c_table[10]}\n{c_table[11]}\n{c_table[12]}"
 
     #Rogue
 
+    if player_class == "Rogue":
+        bonus = 2
+        prof = [("Armor: Light armor"), 
+                ("Weapons: simple weapons, hand crossbows, longswords, rapiers, and shortswords"), 
+                ("Tools: Thieves' tools"), 
+                ("Saving Throws: DEX and INT")]
+        prof_bonus = f"Proficiency Bonus: +{bonus}"
+        sneak_dmg = [("1d6"), ("2d6")]
+        sneak_atk = sneak_dmg[0]
+        if level == '3':
+            sneak_atk = sneak_dmg[1]
+        sneak_atk_str = f"Sneak Attack Damage: {sneak_atk}"
+        c_feat = ""
+        c_table = [
+            ("Expertise: Choose two of your skills or one skill and your profiency with thieves' tools. You double the your profiecency bonus for ability checks with those skills."),
+            ("Sneak Attack: Once per turn you can deal an extra 1d6 damage to one creature you hit with an attack you have advantage on. The attack must use a finesse or ranged weapon. You don't need advatage if another enmey to the target is within 5ft of it, that enemy isn't incapaciated, and you don't have disadvatage."),
+            ("Thieves' Cant: You know the additional langauge theives' cant."),
+            ("Cunning Action: You can Hide, Dash, or Disenage as a bonus action."),
+            ("Sub-Class: Theif"),
+            ("Fast Hands: You can preform a Sleight of Hands check or use you theives' tools as a bonus action."),
+            ("Second-Story Work: Climbing no longer cost extra movement. In addition when you take a running jump, you jump increases by a number of feet equal to your DEX mod. ")
+            ] 
+        if level >= '1':
+            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{c_table[0]}\n{c_table[1]}\n{sneak_atk_str}\n{c_table[2]}"    
+        if level >= '2':
+            c_feat += f"\n{c_table[3]}"
+        if level >= '3':
+            c_feat  += f"\n{c_table[4]}\n{c_table[5]}\n{c_table[6]}"
+
     #Sorcerer
+
+    if player_class == "Sorcerer":
+       bonus = 2
+       prof = [("Armor: None"), 
+               ("Weapons: Daggers, darts, slings, quarterstaffs, light crossbows"), 
+               ("Tools: None"), 
+               ("Saving Throws: CON and CHA")]
+       cantrips = "Cantrips: 4"
+       spells_known = f"Spells known: 2"
+       slots = "Spell Slots: 1st: (2)"
+       spells = "Cantrips:\nFire Bolt\nRay of Frost\nDancing Lights\nChill Touch\n1st:\nBurning Hands\nSleep"
+       if level == '2':
+        spells_known = f"Spells known: 3"
+        slots = "Spell Slots: 1st: (3)"
+        spells = "Cantrips:\nFire Bolt\nRay of Frost\nDancing Lights\nChill Touch\n1st:\nBurning Hands\nSleep\nMagic Missle"
+        sorc_points = "Sorcery Points: 2"
+       if level == '3':
+        spells_known = f"Spells known: 4"
+        slots = "Spell Slots: 1st: (4) 2nd (2)"
+        spells = "Cantrips:\nFire Bolt\nRay of Frost\nDancing Lights\nChill Touch\n1st:\nBurning Hands\nSleep\nMagic Missle\n2nd:\nScorching Ray"
+        sorc_points = "Sorcery Points: 3"
+       prof_bonus = f"Proficiency Bonus: +{bonus}"
+       spell_dc = 8 + bonus + spell_mod
+       spell_dc_str = f"Spell Save DC: {spell_dc}"
+       points_to_spells = """Spell Slot Level  Sorcery Points
+       1st                      2
+       2nd                     3
+       3rd                     5
+       4th                      6
+       5th                      7"""
+                       
+       c_feat = ""
+       c_table = [
+           ("Sub-Class: Draconic Bloodline"),
+           ("Dragon Ancestor: You are a  descended of a green dragon. You gain the bonus language draconic and have double your profiecency bonus on CHA checks against dragons."),
+           ("Font of Magic: You gain sorcery points that can be used for the following features:"),
+           ("Creating Spell Slots: You can transform unspent sorcery points into one spell slot as a bonus action."),
+           ("Converting a Spell Slot to a Sorcery Points: You can turn a spell slot into a certain number of sorcery points as a bonus action."),
+           ("Metamagic: You gain two effects that empower you spell for the  cost of sorcery points."),
+           ("Empower Spell: When you roll DMG for a spell you can spend one sorcery point to reroll the DMG diceup to your CHA mod. You can use this metamagic along with other metamagic effects."),
+           ("Quickened Spell: When you cast a spell that has a casting time of one action you can spend two sorcery points to change the casting time to one bonus action.")
+           ] 
+       if level >= '1':
+           c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{cantrips}\n{spells_known}\n{slots}\n{spells}\n{c_table[0]}\n{c_table[1]}"    
+       if level >= '2':
+           c_feat += f"\n{c_table[2]}\n{c_table[3]}\n{c_table[4]}\n{sorc_points}\n{points_to_spells}"
+       if level >= '3':
+           c_feat  += f"\n{c_table[5]}\n{c_table[6]}\n{c_table[7]}"
 
     #Warlock
 
-    #Wizard
-
-    """
-    if player_class == "":
+    if player_class == "Warlock":
         bonus = 2
-        prof = [("Armor: "), ("Weapons: "), ("Tools: "), ("Saving Throws: ")]
+        prof = [("Armor: Light armor"), 
+                ("Weapons: Simple weapons"), 
+                ("Tools: None"), 
+                ("Saving Throws: WIS and CHA")]
         cantrips = "Cantrips: 2"
-        spells_known = f"Spells Prepared: {level + spell_mod}"
-        slots = "Spell Slots: 1st: (2)"
-        spells = "Cantrips:\nxxxx\n1st:\nxxxxx"
+        spells_known = f"Spells Known: 2"
+        slots = "Spell Slots: 1 at 1st level"
+        spells = "Cantrips:\nEldritch Blast\nChill Touch\nSpells:\nHellish Rebuke\nCharm Person"
+        if level == '2':
+            cantrips = "Cantrips: 2"
+            spells_known = f"Spells Known: 3"
+            slots = "Spell Slots: 2 at 1st level"
+            spells = "Cantrips:\nEldritch Blast\nChill Touch\nSpells:\nHellish Rebuke\nBurning Hands\nCommand"
+        if level == '3':
+            cantrips = "Cantrips: 5"
+            spells_known = f"Spells Known: 4"
+            slots = "Spell Slots: 2 at 2nd level"
+            spells = "Cantrips:\nEldritch Blast\nChill Touch\nVicious Mockery\nThaumaturgy\nMage Hand\nSpells:\nHellish Rebuke\nBurning Hands\nCommand\nScorching Ray"
+        fiend_spells =[
+            ("1st: Buring Hands and Command"),
+            ("2nd: Blindness/Deafness and Scorching Ray"),
+            ("3rd: Fireball and Stinking Cloud"),
+            ("4th: Fire Shield and Wall of Fire"),
+            ("5th: Flame Strike and Hallow")
+            ]
         prof_bonus = f"Proficiency Bonus: +{bonus}"
         spell_dc = 8 + bonus + spell_mod
         spell_dc_str = f"Spell Save DC: {spell_dc}"
         c_feat = ""
-        c_table = [()] 
+        c_table = [
+            ("Pact Magic: When you cast a spell you cast it at the highest level possible for your level. You regain spell slots after a short or long rest."),
+            ("Sub-Class: Otherworldly Patron: The Fiend"),
+            ("Fiend spells: These spells are added to your Warlock spell list:"),
+            ("Dark One's Blessing: When you reduce a hostile creature to zero HP you gain temporary HP equal to your CHA mod + warlock level."),
+            ("Eldritch Invocations: You gain the following features:"),
+            ("Agonizing Blast: Add your CHA mod to the DMG done with eldritch blast"),
+            ("Repelling Blast: When you hit with a creature with eldritch blast you can push the creature up to 10ft away from you in a straight line"),
+            ("Pact Boon: You gain a feature from you patron."),
+            ("Pact of the Tome: You gain three cantrips from any spell list and they  are treated as warlock spells.")
+            ] 
         if level >= '1':
-            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{c_table[0]}\n{c_table[1]}"    
+            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{cantrips}\n{spells_known}\n{slots}\n{spells}\n{c_table[0]}\n{c_table[1]}\n{c_table[2]}\n{fiend_spells[0]}\n{fiend_spells[1]}\n{fiend_spells[2]}\n{fiend_spells[3]}\n{fiend_spells[4]}\n{c_table[3]}"    
         if level >= '2':
-            c_feat += f"\n{c_table[2]}\n{c_table[3]}"
+            c_feat += f"\n{c_table[4]}\n{c_table[5]}\n{c_table[6]}"
         if level >= '3':
-            c_feat  += f"\n{c_table[4]}\n{c_table[5]}"
-    """        
+            c_feat  += f"\n{c_table[7]}\n{c_table[8]}"
+
+    #Wizard
+
+    if player_class == "Wizard":
+        bonus = 2
+        prof = [
+            ("Armor: None"), 
+            ("Weapons: Daggers, dart, slings, quaterstaffs, and light crossbows"), 
+            ("Tools: None"), 
+            ("Saving Throws: INT and WIS")
+            ]
+        cantrips = "Cantrips: 3"
+        spells_known = f"Spellbook:\nCantrips:\nFire Bolt\nMessage\nMage Hand\n1st:\nBurning Hands\nColor Spray\nDetect Magic\nFeather Fall\nMage Armor\nSheild"
+        slots = "Spell Slots: 1st: (2)"
+        if level == '2':
+            cantrips = "Cantrips: 3"
+            spells_known = f"Spellbook:\nCantrips:\nFire Bolt\nMessage\nMage Hand\n1st:\nBurning Hands\nColor Spray\nDetect Magic\nFeather Fall\nMage Armor\nSheild\nMagic Missle\nThunderwave"
+            slots = "Spell Slots: 1st: (3)"
+        if level == '3':
+            cantrips = "Cantrips: 3"
+            spells_known = f"Spellbook:\nCantrips:\nFire Bolt\nMessage\nMage Hand\n1st:\nBurning Hands\nColor Spray\nDetect Magic\nFeather Fall\nMage Armor\nSheild\nMagic Missle\nThunderwave\n2nd:\nAcid Arrow\nScorching Ray"
+            slots = "Spell Slots: 1st: (4)  2nd: (2)"
+        prof_bonus = f"Proficiency Bonus: +{bonus}"
+        spell_dc = 8 + bonus + spell_mod
+        spell_dc_str = f"Spell Save DC: {spell_dc}"
+        c_feat = ""
+        c_table = [
+            ("Arcane Recovery: Once per day when you finish a short rest you can recover spell slots levels up to half you wizard level rounded up, as long as the spell level isn't over 6th."),
+            ("Sub-Class: School of Evocation"),
+            ("Sculpt Spell: When you cast an evocation spell that effects other creatures you can choose a number of then equal to 1 + the spells level. The chosen creatures automatically succeed on their save against the spell and they take no DMG if they would have taken half DMG.")
+            ] 
+        if level >= '1':
+            c_feat = f"{prof[0]}\n{prof[1]}\n{prof[2]}\n{prof[3]}\n{prof_bonus}\n{cantrips}\n{slots}\n{spells_known}\n{c_table[0]}"    
+        if level >= '2':
+            c_feat += f"\n{c_table[1]}\n{c_table[2]}"
+        if level >= '3':
+            c_feat  += f""
+           
     return f"Race Features:\n{r_feat}\nClass Features:\n{c_feat}"
         
 #Charcter Picture Chooser
@@ -585,6 +849,27 @@ def SKILLS(stre=0, dex=0, con=0, intel=0, wis=0, cha=0, player_class= None, leve
     if player_class == "Monk":
         stats[0] += prof_bonus
         stats[1] += prof_bonus
+    if player_class == "Paladin":
+        stats[9] += prof_bonus
+        stats[17] += prof_bonus
+    if player_class == "Ranger":
+        stats[6] += prof_bonus
+        stats[12] += prof_bonus
+        stats[13] += prof_bonus
+    if player_class == "Rogue":
+        stats[2] += prof_bonus
+        stats[3] += prof_bonus
+        stats[14] += prof_bonus
+        stats[6] += prof_bonus
+    if player_class == "Sorcerer":
+        stats[4] += prof_bonus
+        stats[15] += prof_bonus
+    if player_class == "Warlock":
+        stats[4] += prof_bonus
+        stats[5] += prof_bonus
+    if player_class == "Wizard":
+        stats[4] += prof_bonus
+        stats[6] += prof_bonus
         
     #Skills and stats are indexed through and combined into  a string (skill_bloack) to be returned
 
