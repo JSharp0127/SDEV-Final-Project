@@ -1,12 +1,11 @@
 # SDEV-Final-Project
 My final project for SDEV 140. 
 
-A general use character creator for Dungeons and Dragons
+A general use character creator for Dungeons and Dragons.
 
-A work in progress of a character creator for 5e Dungeons and Dragons.
-General character creation for beginner players or players wanting a quick made character.
-
-Goal: Allow a player to enter basic information to allow them to have a usable character to 
-begin playing in a timely manner.
+This application allow the user to create a player character
+with minimalinputs and ease. The characters are built
+using the SRD base rules. A character of any of the base
+classes and races can be made up to level 3.
 
 Less creation time, more play time.
