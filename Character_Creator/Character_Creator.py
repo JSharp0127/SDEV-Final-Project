@@ -1,6 +1,6 @@
 """
 Author: John Sharp
-File: SharpJohnFinalProject.py
+File: Character_Creator.py
 
 This program is made to allow an user to create a Dungeons and Dragons charcter in a quick and easy manner.
 The user imputs a name in to the name entry field, chooses selections from the drop down menues, and uses the provided buttons to control the app. 
